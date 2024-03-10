@@ -1,4 +1,4 @@
 {"Name":"mappingdef1",
 
 
-"mappingDefinition":{"Mappings":{"fieldmapping1":{"MappingAction":2,"Details":["CALC_FUNCTION_X","field2"]}}}}
+"mappingDefinition":{"Mappings":{"fieldmapping1":{"MappingAction":2,"Details":["CONCAT","f2","f3","f4"]}}}}

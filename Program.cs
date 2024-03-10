@@ -120,42 +120,6 @@ EventProcessor ep = new EventProcessor(rf2);
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore IDE0090 // Use 'new(...)'
 
-{
-    Event ev = new Event();
-
-    ev.EventName = "input_event_type_x2";
-
-    ev.Properties = new Dictionary<string, string>();
-
-    ev.Properties.Add("field1", "value1");
-
-    ev.Properties.Add("field2", "value2");
-
-
-
-    List<Event> events = ep.process(ev);
-
-    Console.WriteLine(JsonSerializer.Serialize(events));
-}
-
-
-{
-    Event ev = new Event();
-
-    ev.EventName = "input_event_type_x";
-
-    ev.Properties = new Dictionary<string, string>();
-
-    ev.Properties.Add("field1", "value123");
-
-    ev.Properties.Add("field2", "value2");
-
-
-
-    List<Event> events = ep.process(ev);
-
-    Console.WriteLine(JsonSerializer.Serialize(events));
-}
 
 
 
@@ -170,9 +134,14 @@ EventProcessor ep = new EventProcessor(rf2);
 
     ev.Properties.Add("field2", "value2");
 
+    ev.Properties.Add("f2", "value2222");
+
+    ev.Properties.Add("f3", "value3333");
+
+    ev.Properties.Add("f4", "value4444");
 
 
     List<Event> events = ep.process(ev);
 
-    Console.WriteLine(JsonSerializer.Serialize(events));
+    Console.WriteLine("out_events {0}", JsonSerializer.Serialize(events));
 }

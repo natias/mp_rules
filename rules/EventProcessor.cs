@@ -21,6 +21,29 @@ public class EventProcessor
         
         );
 
+        String func_name=details[0];
+
+        switch(func_name){
+
+            case "CONCAT":
+        {
+
+            
+            
+            string r="";
+            for( int i =1 ;i< 
+            details.Count; i++)
+            {
+
+                r=r+properties[details[i]];
+
+            }
+
+            return r;
+        }
+        }
+
+
         return "123";
         //throw new NotImplementedException();
     }
