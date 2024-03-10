@@ -2,7 +2,7 @@
 
 //service
 
-class EventProcessor
+public class EventProcessor
 {
 
 
@@ -14,19 +14,28 @@ class EventProcessor
     }
     RulesConfiguration rulesConfigurtion;
 
-    EventProcessor(RulesConfiguration rulesConfigurtion)
+    public EventProcessor(RulesConfiguration rulesConfigurtion)
     {
         this.rulesConfigurtion = rulesConfigurtion;
     }
 
     //process events
 
-    List<Event> process(Event @event)
+ public   List<Event> process(Event @event)
     {
 
         List<Event> genaratedEvents = new List<Event>();
 
         string en = @event.eventName;
+
+
+        if (!rulesConfigurtion.rules.ContainsKey(en))
+        {
+            Console.WriteLine("no rules for event {0}", en);
+        //    genaratedEvents.Add(@event);
+            return genaratedEvents;
+        }
+
 
         List<RulesConfiguration.Rule> rulz = rulesConfigurtion.rules[en];
 
@@ -161,6 +170,11 @@ class EventProcessor
                 isContionMet = false;
 
             }
+            else
+            {
+                Console.WriteLine("condition not met for event {0}  rule {1}   ", @event.eventName, rule.condition);
+            }
+
 
 
 
@@ -172,6 +186,10 @@ class EventProcessor
 
     private string calculate(Dictionary<string, string> properties, List<string> details)
     {
-        throw new NotImplementedException();
+
+        Console.WriteLine("calculating properties {0} details {1}",properties.ToString(),details.ToString());
+
+        return "123";
+        //throw new NotImplementedException();
     }
 }

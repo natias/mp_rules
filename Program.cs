@@ -3,6 +3,9 @@ using System.Text.Json;
 
 //Console.WriteLine("Hello, World!");
 
+
+// define rules
+
 RulesConfiguration rulesConf = new RulesConfiguration();
 
 Dictionary<string, RulesConfiguration.MappingDefinition> mappings = new Dictionary<string, RulesConfiguration.MappingDefinition>();
@@ -84,12 +87,10 @@ rulesConf.version = "1.0";
 
 
 
-// Console.WriteLine(JsonSerializer.Serialize(rulesConf));
 
 
+// validate the serialization
 
-
-// string escapedJson = "{\"rules\":{\"input_event_type_x\":[{\"condition\":{\"field1\":\"value1\"},\"action\":1,\"actionOperand\":\"mappingdef1\"}]},\"mappings\":{\"mappingdef1\":{\"mappings\":{\"fieldmapping1\":{\"mappingAction\":2,\"details\":[\"CALC_FUNCTION_X\",\"field2\"]}}}},\"version\":\"1.0\"}";
 
 
 RulesConfiguration rf2 = JsonSerializer.Deserialize<RulesConfiguration>(JsonSerializer.Serialize(rulesConf));
@@ -105,3 +106,66 @@ Console
 
 
 
+// use case for the rules
+
+
+
+
+EventProcessor ep = new EventProcessor(rf2);
+
+{
+    Event ev = new Event();
+
+ev.eventName = "input_event_type_x";
+
+ev.properties = new Dictionary<string, string>();
+
+ev.properties.Add("field1", "value1");
+
+ev.properties.Add("field2", "value2");
+
+
+
+List<Event> events  = ep.process(ev);
+
+Console.WriteLine(JsonSerializer.Serialize(events));
+}
+
+
+{
+    Event ev = new Event();
+
+ev.eventName = "input_event_type_x";
+
+ev.properties = new Dictionary<string, string>();
+
+ev.properties.Add("field1", "value123");
+
+ev.properties.Add("field2", "value2");
+
+
+
+List<Event> events  = ep.process(ev);
+
+Console.WriteLine(JsonSerializer.Serialize(events));
+}
+
+
+
+{
+    Event ev = new Event();
+
+ev.eventName = "input_event_type_x2";
+
+ev.properties = new Dictionary<string, string>();
+
+ev.properties.Add("field1", "value1");
+
+ev.properties.Add("field2", "value2");
+
+
+
+List<Event> events  = ep.process(ev);
+
+Console.WriteLine(JsonSerializer.Serialize(events));
+}
