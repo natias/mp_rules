@@ -16,13 +16,13 @@ public class RulesConfiguration
         public class MappingActionDetails
         {
 
-            public MappingAction mappingAction { get; set; }
+            public MappingAction MappingAction { get; set; }
 
-            public List<string> details { get; set; }
+            public List<string>? Details { get; set; }
 
 
         }
-        public Dictionary<string, MappingActionDetails> mappings { get; set; }
+        public Dictionary<string, MappingActionDetails>? Mappings { get; set; }
 
 
 
@@ -38,9 +38,9 @@ public class RulesConfiguration
 
         //each key is a field name, each value is a target value for the field to be met
         //if all fields are met, the action is executed
-        public Dictionary<string, string> condition { get; set; }
+        public Dictionary<string, string>? Condition { get; set; }
 
-        public enum Action
+        public enum ActionEnum
         {
 
             CreateSubEvent,
@@ -49,23 +49,26 @@ public class RulesConfiguration
 
         }
 
-        public Action action { get; set; }
+        public ActionEnum Action { get; set; } 
+
 
 
         //if action is createSubEvent, this is the name of the subevent to create
         //if action is mpEvent, this is the name of mapping definition to use
 
-        public string actionOperand { get; set; }
+        public string? ActionOperand { get; set; }
 
 
 
 
     }
 
-    public Dictionary<string, List<Rule>> rules { get; set; }
+    public Dictionary<string, List<Rule>>? Rules { get; set; }=default;
 
-    public Dictionary<string, MappingDefinition> mappings { get; set; }
+    public Dictionary<string, MappingDefinition>? Mappings { get; set; }=default ;
 
 
-    public string version { get; set; }
+
+
+    public string? Version { get; set; }=default;
 }

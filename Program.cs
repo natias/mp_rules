@@ -1,40 +1,28 @@
-﻿// See https://aka.ms/new-console-template for more information
-using System.Text.Json;
-
-//Console.WriteLine("Hello, World!");
-
-
-// define rules
+﻿using System.Text.Json;
 
 RulesConfiguration rulesConf = new RulesConfiguration();
 
 Dictionary<string, RulesConfiguration.MappingDefinition> mappings = new Dictionary<string, RulesConfiguration.MappingDefinition>();
 
 
-RulesConfiguration.MappingDefinition md = new RulesConfiguration.MappingDefinition();
+foreach (string fname in Directory.GetFiles("rules_conf/mapping_defs"))
+{
+    String json = File.ReadAllText(fname);
 
 
-md.mappings = new Dictionary<string, RulesConfiguration.MappingDefinition.MappingActionDetails>();
+    SingleMappingDefinition mappingDefinition =
+     JsonSerializer.Deserialize<SingleMappingDefinition>(json);
+
+    mappings.Add(mappingDefinition.Name, mappingDefinition.mappingDefinition);
 
 
-RulesConfiguration.MappingDefinition.MappingActionDetails fm1 = new RulesConfiguration.MappingDefinition.MappingActionDetails();
-
-
-fm1.mappingAction = RulesConfiguration.MappingDefinition.MappingAction.CALCULATE;
-
-fm1.details = new List<string> { "CALC_FUNCTION_X", "field2" };
-
-md.mappings.Add("fieldmapping1", fm1);
-
+}
 
 
 
 
 
-mappings.Add("mappingdef1", md);
-
-
-rulesConf.mappings = mappings;
+rulesConf.Mappings = mappings;
 
 
 
@@ -42,24 +30,6 @@ rulesConf.mappings = mappings;
 
 Dictionary<string, List<RulesConfiguration.Rule>> rules = new Dictionary<string, List<RulesConfiguration.Rule>>();
 
-List<RulesConfiguration.Rule> rs = new List<RulesConfiguration.Rule>();
-
-
-RulesConfiguration.Rule rule = new RulesConfiguration.Rule();
-
-rule.condition = new Dictionary<string, string>();
-
-rule.condition.Add("field1", "value1");
-
-
-
-
-
-rule.action = RulesConfiguration.Rule.Action.MPEvent;
-
-rule.actionOperand = "mappingdef1";
-
-rs.Add(rule);
 
 
 
@@ -67,16 +37,42 @@ rs.Add(rule);
 
 
 
+foreach (string fname in Directory.GetFiles("rules_conf/rules"))
+{
+    String json = File.ReadAllText(fname);
 
 
-rules.Add("input_event_type_x", rs);
+    SingleRule singleRule =
+     JsonSerializer.Deserialize<SingleRule>(json);
+
+
+    if (!rules.ContainsKey(singleRule.Name))
+    {
+
+
+        List<RulesConfiguration.Rule> newlist = new List<RulesConfiguration.Rule>()
+        ;
+        rules[singleRule.Name] = newlist;
+
+
+    }
+
+
+    rules[singleRule.Name].Add(singleRule.rule);
 
 
 
 
-rulesConf.rules = rules;
+}
 
-rulesConf.version = "1.0";
+
+
+
+
+
+rulesConf.Rules = rules;
+
+rulesConf.Version = "1.0";
 
 
 
@@ -93,12 +89,19 @@ rulesConf.version = "1.0";
 
 
 
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
 RulesConfiguration rf2 = JsonSerializer.Deserialize<RulesConfiguration>(JsonSerializer.Serialize(rulesConf));
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
 
 
 
 Console
-.WriteLine(string.Compare(JsonSerializer.Serialize(rulesConf), JsonSerializer.Serialize(rf2))
+.WriteLine(
+    JsonSerializer.Serialize(rulesConf)
+//string.Compare(JsonSerializer.Serialize(rulesConf), JsonSerializer.Serialize(rf2)
+
+
+
 
 
 
@@ -111,43 +114,47 @@ Console
 
 
 
+#pragma warning disable IDE0090 // Use 'new(...)'
+#pragma warning disable CS8604 // Possible null reference argument.
 EventProcessor ep = new EventProcessor(rf2);
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore IDE0090 // Use 'new(...)'
 
 {
     Event ev = new Event();
 
-ev.eventName = "input_event_type_x";
+    ev.EventName = "input_event_type_x2";
 
-ev.properties = new Dictionary<string, string>();
+    ev.Properties = new Dictionary<string, string>();
 
-ev.properties.Add("field1", "value1");
+    ev.Properties.Add("field1", "value1");
 
-ev.properties.Add("field2", "value2");
+    ev.Properties.Add("field2", "value2");
 
 
 
-List<Event> events  = ep.process(ev);
+    List<Event> events = ep.process(ev);
 
-Console.WriteLine(JsonSerializer.Serialize(events));
+    Console.WriteLine(JsonSerializer.Serialize(events));
 }
 
 
 {
     Event ev = new Event();
 
-ev.eventName = "input_event_type_x";
+    ev.EventName = "input_event_type_x";
 
-ev.properties = new Dictionary<string, string>();
+    ev.Properties = new Dictionary<string, string>();
 
-ev.properties.Add("field1", "value123");
+    ev.Properties.Add("field1", "value123");
 
-ev.properties.Add("field2", "value2");
+    ev.Properties.Add("field2", "value2");
 
 
 
-List<Event> events  = ep.process(ev);
+    List<Event> events = ep.process(ev);
 
-Console.WriteLine(JsonSerializer.Serialize(events));
+    Console.WriteLine(JsonSerializer.Serialize(events));
 }
 
 
@@ -155,17 +162,17 @@ Console.WriteLine(JsonSerializer.Serialize(events));
 {
     Event ev = new Event();
 
-ev.eventName = "input_event_type_x2";
+    ev.EventName = "input_event_type_x2";
 
-ev.properties = new Dictionary<string, string>();
+    ev.Properties = new Dictionary<string, string>();
 
-ev.properties.Add("field1", "value1");
+    ev.Properties.Add("field1", "value1");
 
-ev.properties.Add("field2", "value2");
+    ev.Properties.Add("field2", "value2");
 
 
 
-List<Event> events  = ep.process(ev);
+    List<Event> events = ep.process(ev);
 
-Console.WriteLine(JsonSerializer.Serialize(events));
+    Console.WriteLine(JsonSerializer.Serialize(events));
 }

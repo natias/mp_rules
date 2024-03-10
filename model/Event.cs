@@ -1,6 +1,6 @@
 public class Event
 {
-    public string eventName { get; set; }
+    public string? EventName { get; set; }
     
-    public Dictionary<string, string> properties { get; set; }
+    public Dictionary<string, string>? Properties { get; set; }
 }
