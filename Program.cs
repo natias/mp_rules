@@ -1,147 +1,148 @@
 ﻿using System.Text.Json;
 
-RulesConfiguration rulesConf = new RulesConfiguration();
-
-Dictionary<string, RulesConfiguration.MappingDefinition> mappings = new Dictionary<string, RulesConfiguration.MappingDefinition>();
-
-
-foreach (string fname in Directory.GetFiles("rules_conf/mapping_defs"))
+internal class Program
 {
-    String json = File.ReadAllText(fname);
-
-
-    SingleMappingDefinition mappingDefinition =
-     JsonSerializer.Deserialize<SingleMappingDefinition>(json);
-
-    mappings.Add(mappingDefinition.Name, mappingDefinition.mappingDefinition);
-
-
-}
-
-
-
-
-
-rulesConf.Mappings = mappings;
-
-
-
-
-
-Dictionary<string, List<RulesConfiguration.Rule>> rules = new Dictionary<string, List<RulesConfiguration.Rule>>();
-
-
-
-
-
-
-
-
-foreach (string fname in Directory.GetFiles("rules_conf/rules"))
-{
-    String json = File.ReadAllText(fname);
-
-
-    SingleRule singleRule =
-     JsonSerializer.Deserialize<SingleRule>(json);
-
-
-    if (!rules.ContainsKey(singleRule.Name))
+    private static void Main(string[] args)
     {
+        RulesConfiguration rulesConf = new();
+
+        Dictionary<string, RulesConfiguration.MappingDefinition> mappings = new();
 
 
-        List<RulesConfiguration.Rule> newlist = new List<RulesConfiguration.Rule>()
-        ;
-        rules[singleRule.Name] = newlist;
+        foreach (string fname in Directory.GetFiles("rules_conf/mapping_defs"))
+        {
+            string json = File.ReadAllText(fname);
 
 
+            SingleMappingDefinition? mappingDefinition =
+             JsonSerializer.Deserialize<SingleMappingDefinition>(json);
+
+            if (null != mappingDefinition)
+
+                mappings.Add(mappingDefinition!.Name, mappingDefinition.mappingDefinition);
+
+
+        }
+
+
+
+
+
+        rulesConf.Mappings = mappings;
+
+
+
+
+
+        Dictionary<string, List<RulesConfiguration.Rule>> rules = new();
+
+
+
+
+
+
+
+
+        foreach (string fname in Directory.GetFiles("rules_conf/rules"))
+        {
+            string json = File.ReadAllText(fname);
+
+
+            SingleRule? singleRule =
+             JsonSerializer.Deserialize<SingleRule>(json);
+
+
+            if (!rules.ContainsKey(singleRule!.Name))
+            {
+
+
+                List<RulesConfiguration.Rule> newlist = new()
+                ;
+                rules[singleRule.Name] = newlist;
+
+
+            }
+
+
+            rules[singleRule.Name].Add(singleRule.rule);
+
+
+
+
+        }
+
+
+
+
+
+
+        rulesConf.Rules = rules;
+
+        rulesConf.Version = "1.0";
+
+
+
+
+
+
+
+
+
+
+
+
+        // validate the serialization
+
+
+
+        RulesConfiguration rf2 = JsonSerializer.Deserialize<RulesConfiguration>(JsonSerializer.Serialize(rulesConf));
+
+
+
+        Console
+        .WriteLine(
+            JsonSerializer.Serialize(rulesConf)
+
+
+
+
+
+
+        );
+
+
+
+        // use case for the rules
+
+
+
+
+        EventProcessor ep = new EventProcessor(rf2);
+
+
+
+
+        {
+            Event ev = new();
+
+            ev.EventName = "input_event_type_x2";
+
+            ev.Properties = new Dictionary<string, string>();
+
+            ev.Properties.Add("field1", "value1");
+
+            ev.Properties.Add("field2", "value2");
+
+            ev.Properties.Add("f2", "value2222");
+
+            ev.Properties.Add("f3", "value3333");
+
+            ev.Properties.Add("f4", "value4444");
+
+
+            List<Event> events = ep.Process(ev);
+
+            Console.WriteLine("out_events {0}", JsonSerializer.Serialize(events));
+        }
     }
-
-
-    rules[singleRule.Name].Add(singleRule.rule);
-
-
-
-
-}
-
-
-
-
-
-
-rulesConf.Rules = rules;
-
-rulesConf.Version = "1.0";
-
-
-
-
-
-
-
-
-
-
-
-
-// validate the serialization
-
-
-
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-RulesConfiguration rf2 = JsonSerializer.Deserialize<RulesConfiguration>(JsonSerializer.Serialize(rulesConf));
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-
-
-
-Console
-.WriteLine(
-    JsonSerializer.Serialize(rulesConf)
-//string.Compare(JsonSerializer.Serialize(rulesConf), JsonSerializer.Serialize(rf2)
-
-
-
-
-
-
-);
-
-
-
-// use case for the rules
-
-
-
-
-#pragma warning disable IDE0090 // Use 'new(...)'
-#pragma warning disable CS8604 // Possible null reference argument.
-EventProcessor ep = new EventProcessor(rf2);
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore IDE0090 // Use 'new(...)'
-
-
-
-
-{
-    Event ev = new Event();
-
-    ev.EventName = "input_event_type_x2";
-
-    ev.Properties = new Dictionary<string, string>();
-
-    ev.Properties.Add("field1", "value1");
-
-    ev.Properties.Add("field2", "value2");
-
-    ev.Properties.Add("f2", "value2222");
-
-    ev.Properties.Add("f3", "value3333");
-
-    ev.Properties.Add("f4", "value4444");
-
-
-    List<Event> events = ep.process(ev);
-
-    Console.WriteLine("out_events {0}", JsonSerializer.Serialize(events));
 }

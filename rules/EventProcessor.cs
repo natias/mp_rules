@@ -72,24 +72,19 @@ public class EventProcessor
 
     //process events
 
- public   List<Event> process(Event @event)
+ public   List<Event> Process(Event @event)
     {
 
-        List<Event> genaratedEvents = new List<Event>();
+        List<Event> genaratedEvents = new();
 
         string? en = @event.EventName;
 
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
         if (!rulesConfigurtion.Rules.ContainsKey(en))
         {
             Console.WriteLine("no rules for event {0}", en);
-        //    genaratedEvents.Add(@event);
             return genaratedEvents;
         }
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
 
         List<RulesConfiguration.Rule> rulz = rulesConfigurtion.Rules[en];
@@ -100,7 +95,7 @@ public class EventProcessor
         {
 
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+
             foreach (KeyValuePair<string, string> condition in rule.Condition)
             {
 
@@ -108,7 +103,6 @@ public class EventProcessor
                 string fieldValue = condition.Value;
 
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 if (@event.Properties.ContainsKey(fieldName) && @event.Properties[fieldName] == fieldValue)
                 {
                     //condition met
@@ -119,9 +113,7 @@ public class EventProcessor
                 {
                     isContionMet = false;
                 }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
             if (isContionMet)
             {
@@ -132,7 +124,7 @@ public class EventProcessor
                 {
                     case RulesConfiguration.Rule.ActionEnum.CreateSubEvent:
                         {
-                            Event newEvent = new Event();
+                            Event newEvent = new();
                             newEvent.EventName = rule.ActionOperand;
                             //newEvent.properties = new Dictionary<string, string>();
                             newEvent.Properties = @event.Properties;
@@ -143,7 +135,7 @@ public class EventProcessor
                              @event.EventName);
 
 
-                            genaratedEvents.AddRange(process(newEvent));
+                            genaratedEvents.AddRange(Process(newEvent));
 
 
 
@@ -154,7 +146,7 @@ public class EventProcessor
                         {
 
 
-                            Event newEvent = new Event();
+                            Event newEvent = new();
 
                             newEvent.EventName = rule.ActionOperand;
 
@@ -164,13 +156,8 @@ public class EventProcessor
 
 
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8604 // Possible null reference argument.
                             RulesConfiguration.MappingDefinition mp = rulesConfigurtion.Mappings[rule.ActionOperand];
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                             foreach (KeyValuePair<string, RulesConfiguration.MappingDefinition.MappingActionDetails> mapping in mp.Mappings)
                             {
 
@@ -191,21 +178,13 @@ public class EventProcessor
                                     case RulesConfiguration.MappingDefinition.MappingAction.COPY:
                                         {
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
                                             value = @event.Properties[mappingdetails.Details[0]];
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                                         }
                                         break;
                                     case RulesConfiguration.MappingDefinition.MappingAction.TOKENIZE:
                                         {
 
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
                                             value = tokenize(@event.Properties, mappingdetails.Details);
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8604 // Possible null reference argument.
                                         }
                                         break;
 
@@ -213,11 +192,7 @@ public class EventProcessor
                                         case RulesConfiguration.MappingDefinition.MappingAction.CALCULATE:
                                         {
 
-#pragma warning disable CS8604 // Possible null reference argument.
-#pragma warning disable CS8604 // Possible null reference argument.
                                             value = calculate(@event.Properties, mappingdetails.Details);
-#pragma warning restore CS8604 // Possible null reference argument.
-#pragma warning restore CS8604 // Possible null reference argument.
                                         }
                                         break;
 
@@ -232,7 +207,6 @@ public class EventProcessor
 
 
                             }
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
 
 
